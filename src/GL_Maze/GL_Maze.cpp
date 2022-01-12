@@ -33,7 +33,7 @@ codCol;
 
 // variabile pentru matricea de vizualizare
 float Refx = 0.0f, Refy = 0.0f, Refz = 0.0f;
-float alpha = 0.0f, beta = 0.0f, dist = 200.0f;
+float Alpha = 0.0f, Beta = 0.0f, dist = 200.0f;
 float Obsx, Obsy, Obsz;
 float Vx = 0.0f, Vy = 0.0f, Vz = -1.0f;
 float incr_alpha1 = 0.01f, incr_alpha2 = 0.01f;
@@ -68,14 +68,14 @@ void processSpecialKeys(int key, int xx, int yy) {
 	switch (key)
 	{
 	case GLUT_KEY_LEFT:
-		beta -= 0.01f;
+		Beta -= 0.01f;
 		break;
 	case GLUT_KEY_RIGHT:
-		beta += 0.01f;
+		Beta += 0.01f;
 		break;
 	case GLUT_KEY_UP:
-		alpha += incr_alpha1;
-		if (abs(alpha - PI / 2) < 0.05)
+		Alpha += incr_alpha1;
+		if (abs(Alpha - PI / 2) < 0.05)
 		{
 			incr_alpha1 = 0.f;
 		}
@@ -85,8 +85,8 @@ void processSpecialKeys(int key, int xx, int yy) {
 		}
 		break;
 	case GLUT_KEY_DOWN:
-		alpha -= incr_alpha2;
-		if (abs(alpha + PI / 2) < 0.05)
+		Alpha -= incr_alpha2;
+		if (abs(Alpha + PI / 2) < 0.05)
 		{
 			incr_alpha2 = 0.f;
 		}
@@ -251,9 +251,9 @@ void RenderFunction(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
 
 	//pozitia observatorului
-	Obsx = Refx + dist * cos(alpha) * cos(beta);
-	Obsy = Refy + dist * cos(alpha) * sin(beta);
-	Obsz = Refz + dist * sin(alpha);
+	Obsx = Refx + dist * cos(Alpha) * cos(Beta);
+	Obsy = Refy + dist * cos(Alpha) * sin(Beta);
+	Obsz = Refz + dist * sin(Alpha);
 
 	// reperul de vizualizare
 	glm::vec3 Obs = glm::vec3(Obsx, Obsy, Obsz);   // se schimba pozitia observatorului	

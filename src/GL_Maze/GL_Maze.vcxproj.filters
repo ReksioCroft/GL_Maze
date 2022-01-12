@@ -39,23 +39,29 @@
     <ClInclude Include="..\..\include\GL\wglew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\loadShaders.h">
+    <ClInclude Include="loadShaders.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imageloader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\loadShaders.cpp">
+    <ClCompile Include="GL_Maze.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GL_Maze.cpp">
+    <ClCompile Include="loadShaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imageloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\bin\x64\Debug\GL_Maze_Shader.frag">
+    <None Include="GL_Maze_Shader.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\bin\x64\Debug\GL_Maze_Shader.vert">
+    <None Include="GL_Maze_Shader.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
