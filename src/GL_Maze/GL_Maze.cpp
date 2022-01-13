@@ -324,11 +324,11 @@ void RenderFunction(void)
 
 	// Cubul
 	// Fetele
-	codCol = 0;
+	codCol = 2;
 	glUniform1i(codColLocation, codCol);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (void*)(30));
 	// Muchiile
-	codCol = 0;
+	codCol = 2;
 	glUniform1i(codColLocation, codCol);
 	glLineWidth(3.5);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(66));
