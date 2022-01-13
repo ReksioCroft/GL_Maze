@@ -323,19 +323,29 @@ void RenderFunction(void)
 
 
 	// Cubul
+
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA); // de testat alte variante https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBlendFunc.xhtml si factori-destinatie: GL_ONE, GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+	//glBlendEquation(GL_FUNC_ADD);
+
 	// Fetele
 	codCol = 2;
 	glUniform1i(codColLocation, codCol);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (void*)(30));
-	// Muchiile
-	codCol = 2;
+	//  Muchiile
+	codCol = 3;
 	glUniform1i(codColLocation, codCol);
-	glLineWidth(3.5);
+	glLineWidth(1.5);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(66));
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(70));
 	glDrawElements(GL_LINES, 8, GL_UNSIGNED_BYTE, (void*)(74));
 
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 
+
+	// Piramidele
 	// Fetele
 	codCol = 0;
 	glUniform1i(codColLocation, codCol);
