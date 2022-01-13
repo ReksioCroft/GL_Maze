@@ -29,6 +29,10 @@ ProgramId,
 viewLocation,
 projLocation,
 codColLocation,
+lightColorLoc,
+lightPosLoc,
+viewPosLoc,
+matrUmbraLocation,
 codCol;
 
 // variabile pentru matricea de vizualizare
@@ -46,7 +50,11 @@ glm::vec3 Obs, PctRef, Vert;
 glm::vec4 Colors[INSTANCE_COUNT];
 
 // matrice utilizate
-glm::mat4 view, projection, MatModel[INSTANCE_COUNT];
+glm::mat4 view, projection, MatModel[INSTANCE_COUNT], matrUmbra;
+
+// sursa de lumina
+float xL = 500.f, yL = 0.f, zL = 400.f;
+
 
 
 void processNormalKeys(unsigned char key, int x, int y)
@@ -223,6 +231,8 @@ void CreateVBO(void)
 	// Indicii 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(3); // atributul 2 = normale
 }
 
 
@@ -261,6 +271,10 @@ void Initialize(void)
 	CreateShaders();
 	viewLocation = glGetUniformLocation(ProgramId, "viewMatrix");
 	projLocation = glGetUniformLocation(ProgramId, "projectionMatrix");
+	matrUmbraLocation = glGetUniformLocation(ProgramId, "matrUmbra");
+	lightColorLoc = glGetUniformLocation(ProgramId, "lightColor");
+	lightPosLoc = glGetUniformLocation(ProgramId, "lightPos");
+	viewPosLoc = glGetUniformLocation(ProgramId, "viewPos");
 	codColLocation = glGetUniformLocation(ProgramId, "codCol");
 }
 
@@ -292,16 +306,29 @@ void RenderFunction(void)
 	// matricea de proiectie
 	projection = glm::infinitePerspective(fov * PI / 180, GLfloat(width) / GLfloat(height), znear);
 	glUniformMatrix4fv(projLocation, 1, GL_FALSE, &projection[0][0]);
-	
+
+
+	// Variabile uniforme pentru iluminare
+	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+	glUniform3f(lightPosLoc, xL, yL, zL);
+	glUniform3f(viewPosLoc, Obsx, Obsy, Obsz);
+
+	// matricea pentru umbra
+	float D = -5.f;
+	matrUmbra[0][0] = zL + D; matrUmbra[0][1] = 0; matrUmbra[0][2] = 0; matrUmbra[0][3] = 0;
+	matrUmbra[1][0] = 0; matrUmbra[1][1] = zL + D; matrUmbra[1][2] = 0; matrUmbra[1][3] = 0;
+	matrUmbra[2][0] = -xL; matrUmbra[2][1] = -yL; matrUmbra[2][2] = D; matrUmbra[2][3] = -1;
+	matrUmbra[3][0] = -D * xL; matrUmbra[3][1] = -D * yL; matrUmbra[3][2] = -D * zL; matrUmbra[3][3] = zL;
+	glUniformMatrix4fv(matrUmbraLocation, 1, GL_FALSE, &matrUmbra[0][0]);
 
 
 	// Cubul
 	// Fetele
-	codCol = 2;
+	codCol = 0;
 	glUniform1i(codColLocation, codCol);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (void*)(30));
 	// Muchiile
-	codCol = 2;
+	codCol = 0;
 	glUniform1i(codColLocation, codCol);
 	glLineWidth(3.5);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(66));
@@ -314,11 +341,11 @@ void RenderFunction(void)
 	glUniform1i(codColLocation, codCol);
 	glDrawElementsInstanced(GL_TRIANGLES, 18, GL_UNSIGNED_BYTE, 0, INSTANCE_COUNT);
 	// Muchiile
-	codCol = 1;
+	/*codCol = 1;
 	glUniform1i(codColLocation, codCol);
 	glLineWidth(2.5);
 	glDrawElementsInstanced(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(18), INSTANCE_COUNT);
-	glDrawElementsInstanced(GL_LINE_LOOP, 8, GL_UNSIGNED_BYTE, (void*)(22), INSTANCE_COUNT);
+	glDrawElementsInstanced(GL_LINE_LOOP, 8, GL_UNSIGNED_BYTE, (void*)(22), INSTANCE_COUNT);*/
 
 
 	glutSwapBuffers();
