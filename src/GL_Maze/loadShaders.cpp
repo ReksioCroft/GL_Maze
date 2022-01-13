@@ -50,7 +50,7 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
     int InfoLogLength;
  
     // Compileaza shader-ul de varf
-    std::cout << "Current path: " << std::filesystem::current_path() << '\n';
+    printf("Current path: %ls\n", std::filesystem::current_path().c_str());
     printf("Compilare shader : %s\n", vertex_file_path);
     char const * VertexSourcePointer = VertexShaderCode.c_str();
     glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);

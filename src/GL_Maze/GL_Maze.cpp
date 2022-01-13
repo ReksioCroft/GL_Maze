@@ -14,8 +14,15 @@
 
 using namespace std;
 
-#define INSTANCE_COUNT 40
+#define INSTANCE_COUNT 37
 const GLfloat PI = 3.141592f;
+// Elemente pentru reprezentarea obiectului central
+// (1) intervalele pentru parametrii considerati (u si v)
+float const U_MIN = -PI / 2, U_MAX = 100, V_MIN = 0, V_MAX = 2 * PI;
+// (2) numarul de paralele/meridiane, de fapt numarul de valori ptr parametri
+int const NR_PARR = 10, NR_MERID = 20;
+// (3) pasul cu care vom incrementa u, respectiv v
+float step_u = (U_MAX - U_MIN) / NR_PARR, step_v = (V_MAX - V_MIN) / NR_MERID;
 
 // identificatori 
 GLuint
@@ -55,7 +62,10 @@ glm::mat4 view, projection, MatModel[INSTANCE_COUNT], matrUmbra;
 // sursa de lumina
 float xL = 500.f, yL = 0.f, zL = 400.f;
 
-
+// alte variabile
+float radius = 50;
+int index, index_aux;
+const int bypass = 7;
 
 void processNormalKeys(unsigned char key, int x, int y)
 {
@@ -157,10 +167,10 @@ void CreateVBO(void)
 		//int fib = fib1 + fib2;
 		//fib1 = fib2;
 		//fib2 = fib;
-
+		n += bypass;
 			//MatModel[n] = glm::translate(glm::mat4(1.0f), glm::vec3(fib * sin( n * 180 / PI), fib * cos( n * 180 / PI), 0.0)) ;
-		MatModel[n] = glm::translate(glm::mat4(1.0f), glm::vec3(INSTANCE_COUNT * n * sin(n * 180 / PI), INSTANCE_COUNT * n * cos(n * 180 / PI), 0.0));
-
+		MatModel[n-bypass] = glm::translate(glm::mat4(1.0f), glm::vec3(INSTANCE_COUNT * n * sin(n * 180 / PI), INSTANCE_COUNT * n * cos(n * 180 / PI), 0.0));
+		n -= bypass;
 	}
 
 	// indicii pentru varfuri
@@ -192,6 +202,53 @@ void CreateVBO(void)
 		8, 12 // Muchie laterala
 	};
 
+
+	// Central object
+
+		// varfurile 
+	// (4) Matricele pentru varfuri, culori, indici
+	glm::vec4 Vertices_Center[(NR_PARR + 1) * NR_MERID];
+	glm::vec3 Colors_Center[(NR_PARR + 1) * NR_MERID];
+	GLushort Indices_Center[2 * (NR_PARR + 1) * NR_MERID + 4 * (NR_PARR + 1) * NR_MERID];
+	for (int merid = 0; merid < NR_MERID; merid++)
+	{
+		for (int parr = 0; parr < NR_PARR + 1; parr++)
+		{
+			// implementarea reprezentarii parametrice 
+			float u = U_MIN + parr * step_u; // valori pentru u si v
+			float v = V_MIN + merid * step_v;
+			float x_vf = radius * cosf(u) * cosf(v); // coordonatele varfului corespunzator lui (u,v)
+			float y_vf = radius * cosf(u) * sinf(v);
+			float z_vf = radius * sinf(u);
+			// identificator ptr varf; coordonate + culoare + indice la parcurgerea meridianelor
+			index = merid * (NR_PARR + 1) + parr;
+			Vertices_Center[index] = glm::vec4(x_vf, y_vf, z_vf, 1.0);
+			Colors_Center[index] = glm::vec3(0.1f + sinf(u), 0.1f + cosf(v), 0.1f + -1.5 * sinf(u));
+			Indices_Center[index] = index;
+			// indice ptr acelasi varf la parcurgerea paralelelor
+			index_aux = parr * (NR_MERID)+merid;
+			Indices_Center[(NR_PARR + 1) * NR_MERID + index_aux] = index;
+			// indicii pentru desenarea fetelor, pentru varful curent sunt definite 4 varfuri
+			if ((parr + 1) % (NR_PARR + 1) != 0) // varful considerat sa nu fie Polul Nord
+			{
+				int AUX = 2 * (NR_PARR + 1) * NR_MERID;
+				int index1 = index; // varful v considerat
+				int index2 = index + (NR_PARR + 1); // dreapta lui v, pe meridianul urmator
+				int index3 = index2 + 1;  // dreapta sus fata de v
+				int index4 = index + 1;  // deasupra lui v, pe acelasi meridian
+				if (merid == NR_MERID - 1)  // la ultimul meridian, trebuie revenit la meridianul initial
+				{
+					index2 = index2 % (NR_PARR + 1);
+					index3 = index3 % (NR_PARR + 1);
+				}
+				Indices_Center[AUX + 4 * index] = index1;  // unele valori ale lui Indices, corespunzatoare Polului Nord, au valori neadecvate
+				Indices_Center[AUX + 4 * index + 1] = index2;
+				Indices_Center[AUX + 4 * index + 2] = index3;
+				Indices_Center[AUX + 4 * index + 3] = index4;
+			}
+		}
+	};
+
 	// generare buffere
 	glGenVertexArrays(1, &VaoId);
 	glGenBuffers(1, &VBPos);
@@ -207,6 +264,11 @@ void CreateVBO(void)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices_Center) + sizeof(Colors), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices_Center), Vertices_Center);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(Vertices_Center), sizeof(Colors), Colors);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices_Center), Indices_Center, GL_STATIC_DRAW);
 
 	// 1: Culoare
 	glBindBuffer(GL_ARRAY_BUFFER, VBCol); // legare buffer
@@ -376,7 +438,7 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(1200, 900);
-	glutCreateWindow("<<Instanced rendering>>");
+	glutCreateWindow("GL_Maze");
 	glewInit();
 	Initialize();
 	glutDisplayFunc(RenderFunction);
