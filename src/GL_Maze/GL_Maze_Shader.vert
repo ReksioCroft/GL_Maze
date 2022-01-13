@@ -20,39 +20,33 @@ uniform int codCol;
  
 void main(void)
   {
-  	if ( codCol==0 )
-    {
-		gl_Position = projectionMatrix*viewMatrix*modelMatrix*in_Position;
+
+	    gl_Position = projectionMatrix*viewMatrix*modelMatrix*in_Position;
         vec3 Normal=mat3(projectionMatrix*viewMatrix*modelMatrix)*in_Normal; 
         vec3 inLightPos= vec3(projectionMatrix*viewMatrix*modelMatrix* vec4(lightPos, 1.0f));
         vec3 inViewPos=vec3(projectionMatrix*viewMatrix*modelMatrix*vec4(viewPos, 1.0f));
         vec3 FragPos = vec3(gl_Position);
 
-            // Ambient
-            float ambientStrength = 0.2f;
-            vec3 ambient = ambientStrength * lightColor;
+        // Ambient
+        float ambientStrength = 0.2f;
+        vec3 ambient = ambientStrength * lightColor;
   	
-            // Diffuse 
-            vec3 norm = normalize(Normal);
-            vec3 lightDir = normalize(inLightPos - FragPos);
-            // vec3 lightDir = normalize(-inLightPos); // pentru sursa directionala
-            float diff = max(dot(norm, lightDir), 0.0);
-            // vec3 diffuse = diff * lightColor;
-            vec3 diffuse = pow(diff,0.2) * lightColor; // varianta de atenuare
+        // Diffuse 
+        vec3 norm = normalize(Normal);
+        vec3 lightDir = normalize(inLightPos - FragPos);
+        // vec3 lightDir = normalize(-inLightPos); // pentru sursa directionala
+        float diff = max(dot(norm, lightDir), 0.0);
+        // vec3 diffuse = diff * lightColor;
+        vec3 diffuse = pow(diff,0.2) * lightColor; // varianta de atenuare
     
-            // Specular
-            float specularStrength = 0.5f;
-            vec3 viewDir = normalize(inViewPos - FragPos);
-            vec3 reflectDir = reflect(-lightDir, norm);  
-            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1);
-            vec3 specular = specularStrength * spec * lightColor;  
+        // Specular
+        float specularStrength = 0.5f;
+        vec3 viewDir = normalize(inViewPos - FragPos);
+        vec3 reflectDir = reflect(-lightDir, norm);  
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1);
+        vec3 specular = specularStrength * spec * lightColor;  
         
-            vec3 result = (ambient + diffuse ) * in_Color;
-	        ex_Color = vec4(result, 1.0f);
-    }
-	if ( codCol==1 )
-		{gl_Position = projectionMatrix*viewMatrix*matrUmbra*modelMatrix*in_Position;
-       // ex_Color=in_Color;
-       }
-   } 
+        vec3 result = (ambient + diffuse ) * in_Color;
+	    ex_Color = vec4(result, 1.0f);
+ } 
  
