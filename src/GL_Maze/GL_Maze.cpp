@@ -112,6 +112,19 @@ void CreateVBO(void)
 		//varf
 		0.0f,  0.0f,-150.f, 1.0f,
 
+		// podeaua din sticla
+		// varfurile din planul z=-50  
+		// coordonate
+		-2000.0f,  -2000.0f, 80.0f, 1.0f, 
+		2000.0f,  -2000.0f, 80.0f, 1.0f,  
+		2000.0f,  2000.0f,  80.0f, 1.0f,   
+		-2000.0f,  2000.0f, 80.0f, 1.0f,  
+		// varfurile din planul z=+50  
+		// coordonate
+		-2000.0f,  -2000.0f, 50.0f, 1.0f,
+		2000.0f,  -2000.0f,  50.0f, 1.0f,
+		2000.0f,  2000.0f,  50.0f, 1.0f,   
+		-2000.0f,  2000.0f, 50.0f, 1.0f, 
 	};
 
 	// Culorile instantelor
@@ -155,6 +168,20 @@ void CreateVBO(void)
 		1, 4,  //muchie fata
 		2, 4,  //muchie fata
 		3, 4,  //muchie fata
+
+		// podeaua de sticla
+		6, 5, 7,   7, 5, 8,  //  Fata "de jos"
+		7, 8, 11,   11, 8, 10,  // Lateral 
+		12, 8, 9,   9, 8, 5,  // Lateral 
+		9, 5, 10,   10, 5, 6,  // Lateral 
+		6, 7, 10,   10, 7, 11,  // Lateral 
+		10, 11, 9,   9, 11, 12, //  Fata "de sus"
+		5, 6, 7, 8,  // Contur fata de jos
+		9, 10, 11, 12,  // Contur fata de sus
+		5, 9, // Muchie laterala
+		6, 10, // Muchie laterala
+		7, 11, // Muchie laterala
+		8, 12 // Muchie laterala
 	};
 
 	// generare buffere
@@ -229,7 +256,7 @@ void DestroyShaders(void)
 
 void Initialize(void)
 {
-	glClearColor(0.35f, 0.6f, 0.85f, 1.0f); // culoarea de fond a ecranului
+	glClearColor(0.1f, 0.2f, 0.3f, 1.0f); // culoarea de fond a ecranului
 	CreateVBO();
 	CreateShaders();
 	viewLocation = glGetUniformLocation(ProgramId, "viewMatrix");
@@ -265,6 +292,22 @@ void RenderFunction(void)
 	// matricea de proiectie
 	projection = glm::infinitePerspective(fov * PI / 180, GLfloat(width) / GLfloat(height), znear);
 	glUniformMatrix4fv(projLocation, 1, GL_FALSE, &projection[0][0]);
+	
+
+
+	// Cubul
+	// Fetele
+	codCol = 2;
+	glUniform1i(codColLocation, codCol);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (void*)(30));
+	// Muchiile
+	codCol = 2;
+	glUniform1i(codColLocation, codCol);
+	glLineWidth(3.5);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(66));
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(70));
+	glDrawElements(GL_LINES, 8, GL_UNSIGNED_BYTE, (void*)(74));
+
 
 	// Fetele
 	codCol = 0;
