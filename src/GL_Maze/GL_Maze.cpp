@@ -376,7 +376,7 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(1200, 900);
-	glutCreateWindow("<<Instanced rendering>>");
+	glutCreateWindow("GL_Maze");
 	glewInit();
 	Initialize();
 	glutDisplayFunc(RenderFunction);
