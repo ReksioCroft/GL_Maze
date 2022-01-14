@@ -28,7 +28,7 @@ void main(void)
         vec3 FragPos = vec3(gl_Position);
 
         // Ambient
-        float ambientStrength = 0.2f;
+        float ambientStrength = 0.5f;
         vec3 ambient = ambientStrength * lightColor;
   	
         // Diffuse 
@@ -40,7 +40,7 @@ void main(void)
         vec3 diffuse = pow(diff,0.2) * lightColor; // varianta de atenuare
     
         // Specular
-        float specularStrength = 0.5f;
+        float specularStrength = 0.7f;
         vec3 viewDir = normalize(inViewPos - FragPos);
         vec3 reflectDir = reflect(-lightDir, norm);  
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1);
