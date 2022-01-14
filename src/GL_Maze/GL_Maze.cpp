@@ -322,8 +322,6 @@ void RenderFunction(void)
 	glUniformMatrix4fv(matrUmbraLocation, 1, GL_FALSE, &matrUmbra[0][0]);
 
 
-
-
 	// Piramidele
 // 
 	// Fetele
@@ -336,7 +334,6 @@ void RenderFunction(void)
 	glLineWidth(2.5);
 	glDrawElementsInstanced(GL_LINE_LOOP, 4, GL_UNSIGNED_BYTE, (void*)(18), INSTANCE_COUNT);
 	glDrawElementsInstanced(GL_LINE_LOOP, 8, GL_UNSIGNED_BYTE, (void*)(22), INSTANCE_COUNT);*/
-
 
 
 	// Cubul
